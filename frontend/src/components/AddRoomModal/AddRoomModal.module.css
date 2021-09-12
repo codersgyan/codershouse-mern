@@ -1,0 +1,92 @@
+.modalMask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalBody {
+    width: 50%;
+    max-width: 500px;
+    background: #1d1d1d;
+    border-radius: 20px;
+    position: relative;
+}
+
+.modalHeader {
+    padding: 30px;
+    border-bottom: 2px solid #262626;
+}
+
+.roomTypes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.typeBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.typeBox.active {
+    background: #262626;
+}
+
+.heading {
+    margin-bottom: 5px;
+}
+
+.subHeading {
+    font-size: 18px;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.modalFooter {
+    padding: 30px;
+    text-align: center;
+}
+.modalFooter h2 {
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.footerButton {
+    background: #20bd5f;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    width: 200px;
+    justify-content: center;
+    padding: 7px 10px;
+    border-radius: 20px;
+    margin: 0 auto;
+    transition: all 0.3s ease-in-out;
+}
+
+.footerButton:hover {
+    background: #13763b;
+}
+
+.footerButton span {
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.closeButton {
+    position: absolute;
+    right: 3px;
+    top: 8px;
+    background: none;
+}

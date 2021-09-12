@@ -47,3 +47,11 @@
     font-weight: bold;
     margin-right: 5px;
 }
+
+.singleSpeaker .avatars img {
+    position: initial;
+}
+
+.singleSpeaker .names {
+    margin-left: 20px;
+}
