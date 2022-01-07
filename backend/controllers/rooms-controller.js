@@ -26,6 +26,12 @@ class RoomsController {
         const allRooms = rooms.map((room) => new RoomDto(room));
         return res.json(allRooms);
     }
+
+    async show(req, res) {
+        const room = await roomService.getRoom(req.params.roomId);
+
+        return res.json(room);
+    }
 }
 
 module.exports = new RoomsController();
