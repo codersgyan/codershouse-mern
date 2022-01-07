@@ -229,5 +229,13 @@ export const useWebRTC = (roomId, user) => {
         audioElements.current[userId] = instance;
     };
 
-    return { clients, provideRef };
+    const handleAudioMute = (mute) => {
+        if (mute === true) {
+            localMediaStream.current.audio = false;
+        } else {
+            localMediaStream.current.audio = true;
+        }
+    };
+
+    return { clients, provideRef, handleAudioMute };
 };
