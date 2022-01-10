@@ -10,6 +10,7 @@ export const useWebRTC = (roomId, user) => {
     const connections = useRef({});
     const socket = useRef(null);
     const localMediaStream = useRef(null);
+    const clientsRef = useRef([]);
 
     const addNewClient = useCallback(
         (newClient, cb) => {
@@ -228,7 +229,7 @@ export const useWebRTC = (roomId, user) => {
 
     useEffect(() => {
         // handle mute and unmute
-        socket.current.on(ACTIONS.UNMUTE, ({ peerId, userId }) => {
+        socket.current.on(ACTIONS.MUTE, ({ peerId, userId }) => {
             console.log('muting', userId);
             setMute(true, userId);
         });
@@ -239,22 +240,35 @@ export const useWebRTC = (roomId, user) => {
         });
 
         const setMute = (mute, userId) => {
-            const client = clients.find((client) => client.id === userId);
-            const connectedClients = clients.filter(
-                (client) => client.id !== userId
+            const clientIdx = clientsRef.current
+                .map((client) => client.id)
+                .indexOf(userId);
+
+            console.log('idx', clientIdx);
+
+            // const connectedClients = clientsRef.current.filter(
+            //     (client) => client.id !== userId
+            // );
+
+            const connectedClientsClone = JSON.parse(
+                JSON.stringify(clientsRef.current)
             );
 
-            if (client) {
-                console.log('muuuu', client);
-                client.muted = mute;
-                setClients((_) => [...connectedClients, client]);
+            if (clientIdx > -1) {
+                connectedClientsClone[clientIdx].muted = mute;
+                console.log('muuuu', connectedClientsClone);
+                setClients((_) => connectedClientsClone);
             }
         };
-    }, [clients]);
+    }, []);
 
     const provideRef = (instance, userId) => {
         audioElements.current[userId] = instance;
     };
+
+    useEffect(() => {
+        clientsRef.current = clients;
+    }, [clients]);
 
     const handleMute = (isMute, userId) => {
         let settled = false;
