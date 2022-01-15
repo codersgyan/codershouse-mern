@@ -11,10 +11,7 @@ const Room = () => {
     const { id: roomId } = useParams();
     const [room, setRoom] = useState(null);
 
-    const { clients, provideRef, handleMute, localStream } = useWebRTC(
-        roomId,
-        user
-    );
+    const { clients, provideRef, handleMute } = useWebRTC(roomId, user);
 
     const history = useHistory();
 
@@ -31,11 +28,17 @@ const Room = () => {
 
     useEffect(() => {
         handleMute(isMuted, user.id);
-        console.log('local', localStream?.getTracks());
     }, [isMuted]);
 
     const handManualLeave = () => {
         history.push('/rooms');
+    };
+
+    const handleMuteClick = (clientId) => {
+        if (clientId !== user.id) {
+            return;
+        }
+        setMuted((prev) => !prev);
     };
 
     return (
@@ -81,7 +84,7 @@ const Room = () => {
                                     />
                                     <button
                                         onClick={() =>
-                                            setMuted((prev) => !prev)
+                                            handleMuteClick(client.id)
                                         }
                                         className={styles.micBtn}
                                     >

@@ -10,6 +10,7 @@ export const useWebRTC = (roomId, user) => {
     const connections = useRef({});
     const socket = useRef(null);
     const localMediaStream = useRef(null);
+    const clientsRef = useRef(null);
 
     const addNewClient = useCallback(
         (newClient, cb) => {
@@ -27,6 +28,10 @@ export const useWebRTC = (roomId, user) => {
         },
         [clients, setClients]
     );
+
+    useEffect(() => {
+        clientsRef.current = clients;
+    }, [clients]);
 
     useEffect(() => {
         socket.current = socketInit();
@@ -228,7 +233,7 @@ export const useWebRTC = (roomId, user) => {
 
     useEffect(() => {
         // handle mute and unmute
-        socket.current.on(ACTIONS.UNMUTE, ({ peerId, userId }) => {
+        socket.current.on(ACTIONS.MUTE, ({ peerId, userId }) => {
             console.log('muting', userId);
             setMute(true, userId);
         });
@@ -239,24 +244,25 @@ export const useWebRTC = (roomId, user) => {
         });
 
         const setMute = (mute, userId) => {
-            const client = clients.find((client) => client.id === userId);
-            const connectedClients = clients.filter(
-                (client) => client.id !== userId
+            const clientIdx = clientsRef.current
+                .map((client) => client.id)
+                .indexOf(userId);
+            const allConnectedClients = JSON.parse(
+                JSON.stringify(clientsRef.current)
             );
-
-            if (client) {
-                console.log('muuuu', client);
-                client.muted = mute;
-                setClients((_) => [...connectedClients, client]);
+            if (clientIdx > -1) {
+                allConnectedClients[clientIdx].muted = mute;
+                setClients(allConnectedClients);
             }
         };
-    }, [clients]);
+    }, []);
 
     const provideRef = (instance, userId) => {
         audioElements.current[userId] = instance;
     };
 
     const handleMute = (isMute, userId) => {
+        console.log('muuuutttee', isMute);
         let settled = false;
 
         if (userId === user.id) {
@@ -291,6 +297,5 @@ export const useWebRTC = (roomId, user) => {
         clients,
         provideRef,
         handleMute,
-        localStream: localMediaStream.current,
     };
 };

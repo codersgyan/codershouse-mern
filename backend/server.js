@@ -11,7 +11,7 @@ const ACTIONS = require('./actions');
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: 'http://localhost:80',
         methods: ['GET', 'POST'],
     },
 });
@@ -19,7 +19,7 @@ const io = require('socket.io')(server, {
 app.use(cookieParser());
 const corsOption = {
     credentials: true,
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:80'],
 };
 app.use(cors(corsOption));
 app.use('/storage', express.static('storage'));
@@ -97,7 +97,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on(ACTIONS.UNMUTE, ({ roomId, userId }) => {
-        console.log('unmute on server', userId);
         const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
         clients.forEach((clientId) => {
             io.to(clientId).emit(ACTIONS.UNMUTE, {
