@@ -137,7 +137,7 @@ export const useWebRTC = (roomId, user) => {
             addNewClient({ ...user, muted: true }, () => {
                 const localElement = audioElements.current[user.id];
                 if (localElement) {
-                    localElement.volume = 0;
+                    // localElement.volume = 0;
                     localElement.srcObject = localMediaStream.current;
                 }
             });

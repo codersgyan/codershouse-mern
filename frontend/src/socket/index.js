@@ -8,7 +8,7 @@ const socketInit = () => {
         transports: ['websocket'],
     };
 
-    return io('http://localhost:5500', options);
+    return io(process.env.SOCKET_SERVER_URL, options);
 };
 
 export default socketInit;
