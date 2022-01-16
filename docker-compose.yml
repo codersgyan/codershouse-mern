@@ -6,8 +6,6 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    networks:
-      - codershouse
     volumes:
       - ./mongo-data:/data/db
   backend:
@@ -16,43 +14,22 @@ services:
       context: ./backend/
     container_name: backend
     restart: always
-    depends_on:
-      - mongodb
     ports:
       - "5500:5500"
     volumes:
-      - ./backend:/backend
-      - ./backend/node_modules
-    networks:
-      - codershouse
-  # frontend:
-  #   build:
-  #     dockerfile: Dockerfile
-  #     context: ./frontend/
-  #   container_name: frontend
-  #   volumes:
-  #     - ./frontend:/frontend
-  #     - ./frontend/node_modules
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - codershouse
-  nginx:
+      - ./backend:/root/backend
+    depends_on:
+      - mongodb
+  frontend:
     build:
       dockerfile: Dockerfile
       context: ./
-    container_name: nginx
+    container_name: frontend
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/default.conf:/etc/nginx/sites-available/default
+      - ./deploy/etc-letsencrypt:/etc/letsencrypt
     depends_on:
       - backend
-    networks:
-      - codershouse
-
-networks:
-  codershouse:
-    driver: bridge
-
-volumes:
-  mongo-data:
-    driver: local
