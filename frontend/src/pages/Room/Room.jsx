@@ -77,7 +77,6 @@ const Room = () => {
                                     />
                                     <audio
                                         autoPlay
-                                        playsInline
                                         ref={(instance) => {
                                             provideRef(instance, client.id);
                                         }}

@@ -12,6 +12,10 @@ export const useWebRTC = (roomId, user) => {
     const localMediaStream = useRef(null);
     const clientsRef = useRef(null);
 
+    useEffect(() => {
+        socket.current = socketInit();
+    }, []);
+
     const addNewClient = useCallback(
         (newClient, cb) => {
             const lookingFor = clients.find(
@@ -32,10 +36,6 @@ export const useWebRTC = (roomId, user) => {
     useEffect(() => {
         clientsRef.current = clients;
     }, [clients]);
-
-    useEffect(() => {
-        socket.current = socketInit();
-    }, []);
 
     // Handle new peer
 
@@ -121,7 +121,8 @@ export const useWebRTC = (roomId, user) => {
             socket.current.off(ACTIONS.ADD_PEER);
         };
     }, [clients]);
-
+    // clients
+    // todo: remove clients dependancy
     useEffect(() => {
         const startCapture = async () => {
             // Start capturing local audio stream.
@@ -137,7 +138,7 @@ export const useWebRTC = (roomId, user) => {
             addNewClient({ ...user, muted: true }, () => {
                 const localElement = audioElements.current[user.id];
                 if (localElement) {
-                    // localElement.volume = 0;
+                    localElement.volume = 0;
                     localElement.srcObject = localMediaStream.current;
                 }
             });
