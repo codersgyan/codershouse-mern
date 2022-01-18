@@ -1,0 +1,41 @@
+version: "3"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - /Users/codersgyan/Documents/databases/mongodb/codershouse-data:/data/db
+  backend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./backend/
+    container_name: backend
+    restart: always
+    ports:
+      - "5500:5500"
+    env_file:
+      - ./backend/.env.dev
+    volumes:
+      - ./backend:/backend
+      - /backend/node_modules
+    depends_on:
+      - mongodb
+  frontend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env.dev
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend

@@ -22,7 +22,6 @@ export const useWebRTC = (roomId, user) => {
                 (client) => client.id === newClient.id
             );
 
-            console.log('clients', clients, lookingFor);
             if (lookingFor === undefined) {
                 setClients(
                     (existingClients) => [...existingClients, newClient],
@@ -40,6 +39,7 @@ export const useWebRTC = (roomId, user) => {
     // Handle new peer
 
     useEffect(() => {
+        console.log('triggered', clients);
         const handleNewPeer = async ({
             peerId,
             createOffer,
@@ -70,8 +70,6 @@ export const useWebRTC = (roomId, user) => {
                 streams: [remoteStream],
             }) => {
                 addNewClient({ ...remoteUser, muted: true }, () => {
-                    // console.log('peer', audioElements.current, peerId);
-
                     if (audioElements.current[remoteUser.id]) {
                         audioElements.current[remoteUser.id].srcObject =
                             remoteStream;
@@ -120,13 +118,11 @@ export const useWebRTC = (roomId, user) => {
         return () => {
             socket.current.off(ACTIONS.ADD_PEER);
         };
-    }, [clients]);
-    // clients
-    // todo: remove clients dependancy
+    }, []);
+
     useEffect(() => {
         const startCapture = async () => {
             // Start capturing local audio stream.
-
             localMediaStream.current =
                 await navigator.mediaDevices.getUserMedia({
                     audio: true,
@@ -162,7 +158,6 @@ export const useWebRTC = (roomId, user) => {
     // Handle ice candidate
     useEffect(() => {
         socket.current.on(ACTIONS.ICE_CANDIDATE, ({ peerId, icecandidate }) => {
-            // console.log('ices', connections.current[peerId]);
             if (icecandidate) {
                 connections.current[peerId].addIceCandidate(icecandidate);
             }
@@ -213,8 +208,6 @@ export const useWebRTC = (roomId, user) => {
 
     useEffect(() => {
         const handleRemovePeer = ({ peerID, userId }) => {
-            console.log('leaving', peerID, userId);
-
             if (connections.current[peerID]) {
                 connections.current[peerID].close();
             }
@@ -235,12 +228,10 @@ export const useWebRTC = (roomId, user) => {
     useEffect(() => {
         // handle mute and unmute
         socket.current.on(ACTIONS.MUTE, ({ peerId, userId }) => {
-            console.log('muting', userId);
             setMute(true, userId);
         });
 
         socket.current.on(ACTIONS.UNMUTE, ({ peerId, userId }) => {
-            console.log('unmuting', userId);
             setMute(false, userId);
         });
 
@@ -263,7 +254,6 @@ export const useWebRTC = (roomId, user) => {
     };
 
     const handleMute = (isMute, userId) => {
-        console.log('muuuutttee', isMute);
         let settled = false;
 
         if (userId === user.id) {
@@ -281,10 +271,6 @@ export const useWebRTC = (roomId, user) => {
                             userId: user.id,
                         });
                     }
-                    // console.log(
-                    //     'localMediaStream ',
-                    //     localMediaStream.current.getTracks()
-                    // );
                     settled = true;
                 }
                 if (settled) {
