@@ -9,6 +9,7 @@ const ACTIONS = {
     ICE_CANDIDATE: 'ice-candidate',
     MUTE: 'mute',
     UNMUTE: 'unmute',
+    MUTE_INFO: 'mute-info',
 };
 
 module.exports = ACTIONS;
