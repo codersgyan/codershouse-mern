@@ -43,6 +43,10 @@ export const useWebRTC = (roomId, user) => {
                     localElement.srcObject = localMediaStream.current;
                 }
             });
+            socket.current.on(ACTIONS.MUTE_INFO, ({ userId, isMute }) => {
+                handleSetMute(isMute, userId);
+            });
+
             socket.current.on(ACTIONS.ADD_PEER, handleNewPeer);
             socket.current.on(ACTIONS.REMOVE_PEER, handleRemovePeer);
             socket.current.on(ACTIONS.ICE_CANDIDATE, handleIceCandidate);
@@ -94,6 +98,17 @@ export const useWebRTC = (roomId, user) => {
                     streams: [remoteStream],
                 }) => {
                     addNewClient({ ...remoteUser, muted: true }, () => {
+                        // get current users mute info
+                        const currentUser = clientsRef.current.find(
+                            (client) => client.id === user.id
+                        );
+                        if (currentUser) {
+                            socket.current.emit(ACTIONS.MUTE_INFO, {
+                                userId: user.id,
+                                roomId,
+                                isMute: currentUser.muted,
+                            });
+                        }
                         if (audioElements.current[remoteUser.id]) {
                             audioElements.current[remoteUser.id].srcObject =
                                 remoteStream;
