@@ -1,11 +1,11 @@
 class UserDto {
-    id;
+    _id;
     phone;
     activated;
     createdAt;
 
     constructor(user) {
-        this.id = user._id;
+        this._id = user._id;
         this.phone = user.phone;
         this.activated = user.activated;
         this.createdAt = user.createdAt;
